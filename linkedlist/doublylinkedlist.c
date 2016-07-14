@@ -176,16 +176,45 @@ void insert_at_pos(Node** href,int pos, int data){
 
 // to insert a node after given data
 void insert_after_data(Node** href, int search_data, int new_data){
-	//check if head reference is valid
+	// check if head reference is valid
 	if(!valid(href)) return;
 	// search for first occurance of matching data item
 	pos = search(*href, search_data);
-	//traverse to the position 
+	// traverse to the position 
 	Node* tmp = gotopos(*href, pos);
+	// create new node
+	Node* new = malloc(sizeof(sizeof(Node)));
+	new->data = new_data;
+	// next of new points to next of tmp
+	new->next = tmp->next;
+	// prev of new points to tmp
+	new->prev = tmp;	
+	// prev of next of temp points to new
+	tmp->next->prev = new;
+	// next of tmp points to new
+	tmp->next = new
 }
 
 // to insert a node before given data
-void insert_before_data(Node**, int, int);
+void insert_before_data(Node** href, int search_data, int){
+	// validate href
+	if(valid(href))return;
+	// search for first occurance of matching data item
+	pos = search(*href, search_data);
+	// traverse to the position before it
+	Node* tmp = gotopos(*href, pos-1);
+	// create new node
+	Node* new = malloc(sizeof(sizeof(Node)));
+	new->data = new_data;
+	// next of new points to next of tmp
+	new->next = tmp->next;
+	// prev of new points to tmp
+	new->prev = tmp;	
+	// prev of next of temp points to new
+	tmp->next->prev = new;
+	// next of tmp points to new
+	tmp->next = new
+}
 
 // delete from head
 void del_from_head(Node**);
