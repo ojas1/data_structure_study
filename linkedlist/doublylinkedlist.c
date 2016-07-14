@@ -13,17 +13,49 @@ typedef struct node{
 }Node;
 // to list available operations
 void list_avail_ops();
+
+// check if pointer is null
+int valid(Node*);
+
+// go to the required position 
+Node* gotopos(Node*, int);
+
+// insert at head
+void insert_at_head(Node**, int);
+
 // to insert a node at position 
-int insert_at_pos(Node**,int);
+void insert_at_pos(Node**,int, int);
+
 // to insert a node after given data
+void insert_after_data(Node**, int, int);
+
 // to insert a node before given data
+void insert_before_data(Node**, int, int);
+
+// delete from head
+void del_from_head(Node**);
+
 // to delete a node at position 
+void del_at_pos(Node**, int);
+
 // to delete a node after given data
+void del_after_data(Node**, int);
+
 // to delete a node before given data
-// to replace node at given position 
+void del_before_data(Node**, int);
+
+// to replace node at given position
+void replace_at_pos(Node**, int, Node*);
+ 
 // to replace a node having some data with a new node having some other data
+void replace_at_data(Node**, int, int);
+
 // to search for node with given data
+void search(Node*, int);
+
 // to print the entire list 
+void print(Node*);
+
 // to reverse the list 
 
 int main(){
@@ -87,6 +119,94 @@ void list_avail_ops(){
 		else printf("%d %s\n",i, AVAILABLE_OPERATIONS[i]);
 	}		
 }
-int insert_at_pos(Node** href,int pos){
-	return 100;
+
+// check if pointer is null
+int valid(Node* ptr){
+	if(ptr == NULL)return 0;
+	return 1;
 }
+
+// go to the required position 
+Node* gotopos(Node* head, int p){
+	// validate pointer 
+	if(!valid(head))return;
+	for(int i=0;i<pos && p!=NULL;i++) {
+		head = head->next;
+	}
+	return head;
+}
+
+void insert_at_head(Node** href, int data){	
+	// check if head reference is valid
+	if(!valid(href)) return;
+	// create a new node
+	Node* new = malloc(sizeof(Node));
+	new->data = data;	
+	// point the next of new node to current head 
+	new->next = *href;
+	// point previous of new node to null
+	new->prev = NULL;
+	// point prev of current head to new node
+	(*href)->prev = new;
+	// change the head reference to new node
+	href = new;
+}
+
+void insert_at_pos(Node** href,int pos, int data){
+	// check if head reference is valid 
+	if(!valid(href)) return;
+	// if pos is zero, redirect to insert_at_head
+   if(pos == 0){	
+		insert_at_head(href, data);
+		return;	
+	}		
+	// temporary pointer to traverse the list
+   Node* temp = *href;
+   // create new node
+   Node* new = malloc(sizeof(Node));
+	// go to the position 
+	temp = gotopos(*href, pos);	
+	// point next of new node to temp and prev of new node prev of temp
+	new->next = temp;
+	new->prev = temp->prev;
+	// point next of prev of temp and prev of temp to new
+	temp->prev->next = new;
+	temp->prev = new;
+}
+
+// to insert a node after given data
+void insert_after_data(Node** href, int search_data, int new_data){
+	//check if head reference is valid
+	if(!valid(href)) return;
+	// search for first occurance of matching data item
+	pos = search(*href, search_data);
+	//traverse to the position 
+	Node* tmp = gotopos(*href, pos);
+}
+
+// to insert a node before given data
+void insert_before_data(Node**, int, int);
+
+// delete from head
+void del_from_head(Node**);
+
+// to delete a node at position 
+void del_at_pos(Node**, int);
+
+// to delete a node after given data
+void del_after_data(Node**, int);
+
+// to delete a node before given data
+void del_before_data(Node**, int);
+
+// to replace node at given position
+void replace_at_pos(Node**, int, Node*);
+ 
+// to replace a node having some data with a new node having some other data
+void replace_at_data(Node**, int, int);
+
+// to search for node with given data
+void search(Node*, int);
+
+// to print the entire list 
+void print(Node*);
