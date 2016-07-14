@@ -149,7 +149,7 @@ void insert_at_head(Node** href, int data){
 	// point prev of current head to new node
 	(*href)->prev = new;
 	// change the head reference to new node
-	href = new;
+	*href = new;
 }
 
 void insert_at_pos(Node** href,int pos, int data){
@@ -180,62 +180,59 @@ void insert_after_data(Node** href, int search_data, int new_data){
 	if(!valid(href)) return;
 	// search for first occurance of matching data item
 	pos = search(*href, search_data);
-	// traverse to the position 
-	Node* tmp = gotopos(*href, pos);
-	// create new node
-	Node* new = malloc(sizeof(sizeof(Node)));
-	new->data = new_data;
-	// next of new points to next of tmp
-	new->next = tmp->next;
-	// prev of new points to tmp
-	new->prev = tmp;	
-	// prev of next of temp points to new
-	tmp->next->prev = new;
-	// next of tmp points to new
-	tmp->next = new
+	insert_at_pos(href, pos+1, new_data);
 }
 
 // to insert a node before given data
 void insert_before_data(Node** href, int search_data, int){
 	// validate href
-	if(valid(href))return;
+	if(!valid(href))return;
 	// search for first occurance of matching data item
 	pos = search(*href, search_data);
-	// traverse to the position before it
-	Node* tmp = gotopos(*href, pos-1);
-	// create new node
-	Node* new = malloc(sizeof(sizeof(Node)));
-	new->data = new_data;
-	// next of new points to next of tmp
-	new->next = tmp->next;
-	// prev of new points to tmp
-	new->prev = tmp;	
-	// prev of next of temp points to new
-	tmp->next->prev = new;
-	// next of tmp points to new
-	tmp->next = new
+	insert_at_pos(href, pos-1, new_data);
 }
 
 // delete from head
-void del_from_head(Node**);
+void del_from_head(Node** href){
+	// validate
+	if(!valid(href))return;
+	head = *href;
+	head->next->prev = NULL;
+	*href = (*href)->next;
+	free(head);
+}
+
+// delete given node
+void delete_node(Node* node){
+	if(!valid(node))return;
+	if(valid(node->next))node->next->prev = node->prev;
+	if(valid(node->prev))node->prev->next = node->next;
+	free(node);
+}
 
 // to delete a node at position 
-void del_at_pos(Node**, int);
+void del_at_pos(Node** href, int pos){
+	if(!valid(href))return;
+	// go to position 
+	Node* tmp = gotopos(*href);
+	// delete it
+	delete_node();
+}
 
 // to delete a node after given data
-void del_after_data(Node**, int);
+void del_after_data(Node** href, int data){}
 
 // to delete a node before given data
-void del_before_data(Node**, int);
+void del_before_data(Node** href, int data){}
 
 // to replace node at given position
-void replace_at_pos(Node**, int, Node*);
+void replace_at_pos(Node** href, int pos, Node* new);
  
 // to replace a node having some data with a new node having some other data
-void replace_at_data(Node**, int, int);
+void replace_at_data(Node** href, int old_data, int new_data);
 
 // to search for node with given data
-void search(Node*, int);
+void search(Node* head, int data);
 
 // to print the entire list 
 void print(Node*);
