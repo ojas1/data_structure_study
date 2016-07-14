@@ -214,25 +214,56 @@ void delete_node(Node* node){
 void del_at_pos(Node** href, int pos){
 	if(!valid(href))return;
 	// go to position 
-	Node* tmp = gotopos(*href);
+	Node* tmp = gotopos(*href, pos);
 	// delete it
-	delete_node();
+	delete_node(tmp);
 }
 
 // to delete a node after given data
-void del_after_data(Node** href, int data){}
+void del_after_data(Node** href, int data){
+	if(!valid(href))return;
+	pos = search(*href, data);
+	Node* tmp = gotopos(*href, pos+1);
+	delete_node(tmp);
+}
 
 // to delete a node before given data
-void del_before_data(Node** href, int data){}
+void del_before_data(Node** href, int data){
+	if(!valid(href))return;
+	pos = search(*href, data);
+	Node* tmp = gotopos(*href, pos-1);
+	delete_node(tmp);
+}
 
 // to replace node at given position
-void replace_at_pos(Node** href, int pos, Node* new);
+void replace_at_pos(Node** href, int pos, Node* new){
+	if(!valid(href))return;
+	Node* tmp = gotopos(*href, pos);
+	new->next = tmp->next;
+	new->prev = tmp->prev;
+	tmp->next->prev = new;
+	tmp->prev->next = new;
+}
  
 // to replace a node having some data with a new node having some other data
-void replace_at_data(Node** href, int old_data, int new_data);
+void replace_at_data(Node** href, int old_data, int new_data){
+	if(!valid(href))return;
+	pos = search(*href, old_data);
+	Node* new = malloc(sizeof(Node));
+	new->data = new_data;
+	replace_at_pos(href, pos, new);
+}
 
 // to search for node with given data
-void search(Node* head, int data);
+void search(Node* head, int data){
+	if(!valid(head))return;
+	int pos = 0;
+	while(head!=NULL) {
+		if(head->data == data) return pos;
+		pos++;
+	}
+	return -1;
+}
 
 // to print the entire list 
-void print(Node*);
+void print(Node*){}
