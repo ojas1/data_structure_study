@@ -1,13 +1,15 @@
 #include<stdio.h>
 #include<stdlib.h>
 
+// number of available operations
+#define NUM_AVAIL_OPS 12;
+
 // list of available operations
-const char *AVAILABLE_OPERATIONS[]={"list available operations","insert at position","insert after","insert before",
+const char *AVAIL_OPS[]={"list available operations","insert at position","insert after","insert before",
 	"delete node at position","delete node after","delete node before","replace node","search for data",
 	"print entire list", "reverse list","exit"
 };
 
-const int NUMBER_OF_AVAILABLE_OPERATIONS=12;
 
 //node of the doubly linked list
 typedef struct node{
@@ -79,8 +81,6 @@ void print(Node*);
 // perform operation 
 Node* perform(int, Node*);
 
-// to reverse the list 
-
 int main(){
 	// to get the user input for operation
 	int oprtn;
@@ -131,10 +131,10 @@ void list_avail_ops(){
 	
 	printf("\nIDENTIFIED OPERATIONS:\n");
 	
-	for(int i=0;i<NUMBER_OF_AVAILABLE_OPERATIONS;i++){
+	for(int i=0;i<NUM_AVAIL_OPS;i++){
 
-		if(i==11) printf("%d %s\n",-1, AVAILABLE_OPERATIONS[i]);
-		else printf("%d %s\n",i, AVAILABLE_OPERATIONS[i]);
+		if(i==11) printf("%d %s\n",-1, AVAIL_OPS[i]);
+		else printf("%d %s\n",i, AVAIL_OPS[i]);
 	}			
 }
 
