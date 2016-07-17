@@ -15,6 +15,7 @@ typedef struct node{
 	struct node* prev;
 	struct node* next;
 }Node;
+
 // length of the list 
 int length(Node*);
 
@@ -76,16 +77,14 @@ int search(Node*, int);
 void print(Node*);
 
 // perform operation 
-void perform(int);
+Node* perform(int, Node*);
 
 // to reverse the list 
 
 int main(){
 	// to get the user input for operation
 	int oprtn;
-	//head of the linked list
-	Node *head=NULL;
-	
+	Node* head = NULL;
 	// list out the available operations
 	list_avail_ops();
 	
@@ -102,7 +101,7 @@ int main(){
 	  	if(oprtn==-1)break;
 
 		// if request is valid, perform operation 
-	  	else if(oprtn>=0 && oprtn<=10) perform(oprtn);			  		
+	  	else if(oprtn>=0 && oprtn<=10) head = perform(oprtn, head);			  		
 	  	
 	  	else printf("\nUNIDENTIFIED REQUEST\n");
 	}	
@@ -118,12 +117,14 @@ Node* create(int data, Node* prev, Node* next){
 	return new;
 }
 
+
 // length of the list
 int length(Node* head){
 	int len = 0;
 	while(head!=NULL) {len++;	head = head->next;}
 	return len;
 }
+
 
 // list operations
 void list_avail_ops(){
@@ -158,7 +159,7 @@ Node* gotopos(Node* head, int p){
 	// validate pointer 
 	if(!valid(head))return NULL;
 
-	ptr = head;
+	Node* ptr = head;
 	
 	// traverse list until either position is reached, or list ends.	
 	for(int i=0;i<p && ptr!=NULL;i++)ptr = ptr->next;
@@ -166,6 +167,7 @@ Node* gotopos(Node* head, int p){
 	// return pointer to node at required position.
 	return ptr;
 }
+
 
 // insert at head
 void insert_at_head(Node** href, int data){
@@ -200,6 +202,7 @@ void insert_at_tail(Node** href, int data){
 	tail->next = new;
 }
 
+
 // insert at tail
 void insert_at_pos(Node** href,int pos, int data){
 
@@ -210,7 +213,7 @@ void insert_at_pos(Node** href,int pos, int data){
    if(pos == 0){insert_at_head(href, data); return;}
 
 	// if position is +1 of last position, call insert_end()
-	if(length(*href)==pos){insert_end(href, data);return;}
+	if(length(*href)==pos){insert_at_tail(href, data);return;}
 
 	/* if position is not zero, and head is NULL insertion is not possible, 
 	since there is no valid position other than zero. */
@@ -243,6 +246,7 @@ void insert_after_data(Node** href, int search_data, int new_data){
 	// search for first occurance of matching data item
 	int pos = search(*href, search_data);
 
+	if(pos == -1){ printf("\nERROR: data not found.\n"); return; }
 	// insert 
 	insert_at_pos(href, pos+1, new_data);
 }
@@ -252,10 +256,14 @@ void insert_after_data(Node** href, int search_data, int new_data){
 void insert_before_data(Node** href, int search_data, int new_data){
 	// validate href
 	if(!validref(href))return;
+	
 	// search for first occurance of matching data item
 	int pos = search(*href, search_data);
-	insert_at_pos(href, pos-1, new_data);
+
+	if(pos == -1){ printf("\nERROR: data not found.\n"); return;}
+	insert_at_pos(href, pos, new_data);
 }
+
 
 // delete from head
 void del_from_head(Node** href){
@@ -267,6 +275,7 @@ void del_from_head(Node** href){
 	free(head);
 }
 
+
 // delete given node
 void delete_node(Node* node){
 	if(!valid(node))return;
@@ -275,14 +284,21 @@ void delete_node(Node* node){
 	free(node);
 }
 
+
 // to delete a node at position 
 void del_at_pos(Node** href, int pos){
 	if(!validref(href))return;
-	// go to position 
+	
+	// if the position is head, call del_from_head()
+	if(pos==0) {del_from_head(href); return;}
+
+	// else go to position 
 	Node* tmp = gotopos(*href, pos);
+
 	// delete it
 	delete_node(tmp);
 }
+
 
 // to delete a node after given data
 void del_after_data(Node** href, int data){
@@ -292,10 +308,21 @@ void del_after_data(Node** href, int data){
 	delete_node(tmp);
 }
 
+
 // to delete a node before given data
 void del_before_data(Node** href, int data){
 	if(!validref(href))return;
+	
+	// get the position of node before the one having rqd data
 	int pos = search(*href, data);
+	
+	// if there is no such data item in the list, abort the operation 
+	if(pos == -1){printf("\nERROR: data not found.\n"); return;}	
+	
+	// if pos is head call del_from_head()
+	if(pos == 0){del_from_head(href); return;}
+	
+	// else goto the position and delete the node
 	Node* tmp = gotopos(*href, pos-1);
 	delete_node(tmp);
 }
@@ -312,9 +339,11 @@ void replace_at_pos(Node** href, int pos, Node* new){
 	new->next = tmp->next;
 	new->prev = tmp->prev;
 
+	if(pos == 0){ *href = new; }
+	
 	/* connect left and right nodes of old one to new node */
-	tmp->next->prev = new;
-	tmp->prev->next = new;
+	if(valid(tmp->next))tmp->next->prev = new;
+	if(valid(tmp->prev))tmp->prev->next = new;
 }
  
  
@@ -327,7 +356,7 @@ void replace_at_data(Node** href, int old_data, int new_data){
 	int pos = search(*href, old_data);
 
 	// create new node, with data to insert
-	Node* new = create(data, NULL, NULL);
+	Node* new = create(new_data, NULL, NULL);
 	
 	// call function to replace node at given position
 	replace_at_pos(href, pos, new);
@@ -338,7 +367,7 @@ void replace_at_data(Node** href, int old_data, int new_data){
 int search(Node* head, int data){
 	if(!valid(head))return -1;
 	int pos = 0;
-	while(head!=NULL) { if(head->data == data) return pos; pos++; }
+	while(head!=NULL) { if(head->data == data) return pos; head = head->next; pos++; }
 	return -1;
 }
 
@@ -349,7 +378,8 @@ void print(Node* head){
 }
 
 
-void perform(int oprtn){
+// perform operation 
+Node* perform(int oprtn, Node* head){
 	int pos, search_data, new_data, del_data;
 	switch(oprtn){
 		case 0:
@@ -392,7 +422,9 @@ void perform(int oprtn){
 			del_before_data(&head, del_data);
 			break;
 		case 7:
-			printf("\nREPLACE NODE HAVING DATA: ");
+			printf("\nREPLACE: ");
+			scanf("%d", &search_data);
+			printf("\nWITH: ");
 			scanf("%d", &new_data);
 			replace_at_data(&head, search_data, new_data);
 			break;
@@ -404,4 +436,5 @@ void perform(int oprtn){
 			print(head);
 			break;
 	}	
+	return head;
 }
