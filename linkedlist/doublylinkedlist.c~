@@ -260,18 +260,27 @@ void insert_before_data(Node** href, int search_data, int new_data){
 	// search for first occurance of matching data item
 	int pos = search(*href, search_data);
 
+	// if there is no such data item, abort.
 	if(pos == -1){ printf("\nERROR: data not found.\n"); return;}
+
+	// else insert at the position
 	insert_at_pos(href, pos, new_data);
 }
 
 
 // delete from head
 void del_from_head(Node** href){
-	// validate
 	if(!validref(href))return;
+
+	/* dereference the double pointer to head, to get the pointer to head,
+		and if it is null, no need to delete anything, return.*/
 	Node* head = *href;
+	if(!valid(head))return;
+	
+	//delink the old head, and make the second node as new head.
 	head->next->prev = NULL;
 	*href = (*href)->next;
+
 	free(head);
 }
 
@@ -279,8 +288,12 @@ void del_from_head(Node** href){
 // delete given node
 void delete_node(Node* node){
 	if(!valid(node))return;
+	
+	// link the left and right nodes of the one that is deleted
 	if(valid(node->next))node->next->prev = node->prev;
 	if(valid(node->prev))node->prev->next = node->next;
+	
+	// free the node memory
 	free(node);
 }
 
@@ -303,8 +316,14 @@ void del_at_pos(Node** href, int pos){
 // to delete a node after given data
 void del_after_data(Node** href, int data){
 	if(!validref(href))return;
+
+	// get the position of node after given data item
 	int pos = search(*href, data);
+	
+	// if position is after the tail, abort 
 	Node* tmp = gotopos(*href, pos+1);
+	if(tmp == NULL);	
+	
 	delete_node(tmp);
 }
 
@@ -319,8 +338,11 @@ void del_before_data(Node** href, int data){
 	// if there is no such data item in the list, abort the operation 
 	if(pos == -1){printf("\nERROR: data not found.\n"); return;}	
 	
-	// if pos is head call del_from_head()
-	if(pos == 0){del_from_head(href); return;}
+	// if node having reqd data is head, there is no data before that, so return.
+	if(pos == 0){printf("\nERROR: no item before head.\n"); return;}	
+	
+	// if pos to be deleted is head call del_from_head()
+	if(pos == 1){del_from_head(href); return;}
 	
 	// else goto the position and delete the node
 	Node* tmp = gotopos(*href, pos-1);
