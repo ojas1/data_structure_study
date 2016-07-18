@@ -8,7 +8,7 @@ typedef struct {int id; float value;}Ndtype;
 typedef enum {SUCCESS, FAILURE, NOACT}_status_code;
 
 /* ERROR codes */
-typedef enum {NPPTR, NPTR, MMAL, UNID}_error_code;
+typedef enum {NPPTR, NPTR, DUPL, MMAL, UNID}_error_code;
 
 /* tree node */
 typedef struct node{
@@ -35,6 +35,9 @@ void indicate_error(_error_code e){
 		break;
 	case MMAL:
 		printf("ERROR: Memory Allocation Failed");	
+		break;
+	case DUPL:
+		printf("ERROR: ID Duplication Not Allowed");
 		break;
 	default:
 		printf("ERROR: Unidentified Error");
@@ -69,7 +72,37 @@ TNode* create_TNode(Ndtype data){
 
 // find parent of node to be inserted in the tree
 TNode* find_parent(TNode* root, int id){
-	return root;
+	TNode *temp = root, *paren=NULL;
+	
+	while(temp!=NULL) {
+		
+		/* if new node id is less than current node id, 
+		the new node will be in left subtree of the current node */
+		if((temp->data).id > id){
+			printf("\ngoing left\n");
+			paren = temp;		
+			temp = temp->left;
+		}
+		
+		/* if new node id is greater than current node id,
+		the new node will be in the right subtree of the current node */
+		else if((temp->data).id < id){
+			printf("\ngoing right\n");
+			paren = temp;
+			temp = temp->right;
+			}
+		
+		/* if both are equal, the node cannot be inserted, as we are not allowing id duplication */
+		else if((temp->data).id == id){
+			printf("\nduplicate \n");
+			temp = NULL;
+			paren = temp;
+			}
+	}
+	
+	/* we have made sure, that root is never NULL, during function call, so if parent is NULL 
+	 while returning, this means, there is duplication*/
+	return paren;
 }
 
 
@@ -95,12 +128,22 @@ _status_code insert(TNode** rootref, Ndtype data){
 			
 			/* else find the proper parent for the new node, 
 			decide weather it should be left or right child and insert*/
-			TNode* parent = find_parent(*rootref, data.id);
-
-			// insert 
-			if(parent != NULL){
-				parent->left = new_TNode;
-			}			
+			else {
+				TNode* parent = find_parent(*rootref, data.id);
+	
+				// if parent is null, therefore there is no place for the new node,i.e. duplication case occured, so destroy it.
+				if(parent == NULL){
+					indicate_error(DUPL);
+					free(new_TNode);
+					ret_code = FAILURE; 
+					}	
+				
+				// insert to the left or right depending on id
+				else if(parent != NULL){
+					if((parent->data).id > (new_TNode->data).id) parent->left = new_TNode;
+					else if((parent->data).id < (new_TNode->data).id) parent->right = new_TNode;
+				}	
+			}		
 		}		
 	} 	 
 	return ret_code;
@@ -109,9 +152,15 @@ _status_code insert(TNode** rootref, Ndtype data){
 int main(){
 	
 	// test data
-	Ndtype d;
+	Ndtype d,d1,d2;
 	d.id = 3;
 	d.value = 200.0;
+
+	d1.id = 1;
+	d1.value = 400.0;
+
+	d2.id = 1;
+	d2.value = 420.0;
 
 	// testing create new node	
 	TNode* testNode = create_TNode(d);
@@ -124,6 +173,13 @@ int main(){
 	TNode* testRoot = NULL;
 	_status_code status = insert(&testRoot, d);
 	if(status == SUCCESS) printf("\nroot data: id:%d value:%f\n",(testRoot->data).id, (testRoot->data).value);
+
+	// testing general insertion
+	printf("\nTEST2: general insertion:\n");
+	status = insert(&testRoot, d1);
+	printf("status(this should be 0): %d\n", status);
+	status = insert(&testRoot, d2);
+	printf("status(this should be 1): %d\n", status);
 	
 	return 0;
 }
