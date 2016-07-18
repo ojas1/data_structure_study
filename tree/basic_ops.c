@@ -162,6 +162,13 @@ int main(){
 	d2.id = 1;
 	d2.value = 420.0;
 
+	Ndtype data[100];
+	
+	for(int i=0;i<100;i++) {
+		data[i].id = (i*100)%21;
+		data[i].value = i*25.8;	
+	}
+
 	// testing create new node	
 	TNode* testNode = create_TNode(d);
 	printf("\nTEST1: create new node:\n");
@@ -175,11 +182,10 @@ int main(){
 	if(status == SUCCESS) printf("\nroot data: id:%d value:%f\n",(testRoot->data).id, (testRoot->data).value);
 
 	// testing general insertion
-	printf("\nTEST2: general insertion:\n");
-	status = insert(&testRoot, d1);
-	printf("status(this should be 0): %d\n", status);
-	status = insert(&testRoot, d2);
-	printf("status(this should be 1): %d\n", status);
-	
+	printf("\nTEST3: general insertion:\n");
+	for(int i=0;i<100;i++) {
+		status = insert(&testRoot, data[i]);
+		printf("\nstatus: %d\n", status);	
+	}
 	return 0;
 }
