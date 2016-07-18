@@ -44,7 +44,7 @@ void indicate_error(_error_code e){
 
 
 // create new tree node, and return pointer to it.
-TNode* create_TNode(NDtype data){
+TNode* create_TNode(Ndtype data){
 
 	// allocate memory 
 	TNode* tnode= malloc(sizeof(TNode));
@@ -99,7 +99,7 @@ _status_code insert(TNode** rootref, Ndtype data){
 
 			// insert 
 			if(parent != NULL){
-				parent->left = newTNode;
+				parent->left = new_TNode;
 			}			
 		}		
 	} 	 
@@ -107,5 +107,14 @@ _status_code insert(TNode** rootref, Ndtype data){
 }
 
 int main(){
+	
+	// testing create new node
+	Ndtype d;
+	d.id = 3;
+	d.value = 200.0;
+	
+	TNode* testNode = create_TNode(d);
+	printf("\ntest node data id: %d\n", (testNode->data).id);
+	printf("\ntest node data value: %f\n", (testNode->data).value);
 	return 0;
 }
