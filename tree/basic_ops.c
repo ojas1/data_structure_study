@@ -108,13 +108,22 @@ _status_code insert(TNode** rootref, Ndtype data){
 
 int main(){
 	
-	// testing create new node
+	// test data
 	Ndtype d;
 	d.id = 3;
 	d.value = 200.0;
-	
+
+	// testing create new node	
 	TNode* testNode = create_TNode(d);
+	printf("\nTEST1: create new node:\n");
 	printf("\ntest node data id: %d\n", (testNode->data).id);
 	printf("\ntest node data value: %f\n", (testNode->data).value);
+	
+	// testing new tree creation, i.e. inserting first element in the tree, as its root
+	printf("\nTEST2: new tree creation, i.e. inserting first element in the tree, as its root:\n");
+	TNode* testRoot = NULL;
+	_status_code status = insert(&testRoot, d);
+	if(status == SUCCESS) printf("\nroot data: id:%d value:%f\n",(testRoot->data).id, (testRoot->data).value);
+	
 	return 0;
 }
