@@ -184,8 +184,10 @@ int main(){
 	// testing general insertion
 	printf("\nTEST3: general insertion:\n");
 	for(int i=0;i<100;i++) {
+		printf("\ntesting for %d\n", data[i].id);
 		status = insert(&testRoot, data[i]);
-		printf("\nstatus: %d\n", status);	
+		printf("\nstatus: %d\ncontinue?", status);	
+		getchar();
 	}
 	return 0;
 }
