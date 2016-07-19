@@ -16,6 +16,9 @@ typedef struct node{
 	// data to be stored in the node
 	Ndtype data;
 	
+	// pointer to parent
+	struct node* parent;
+	
 	// pointer to left child
 	struct node* left;
 	
@@ -61,6 +64,7 @@ TNode* create_TNode(Ndtype data){
 		(tnode->data).id = data.id;
 		(tnode->data).value = data.value;
 	
+		tnode->parent = NULL;
 		tnode->left = NULL;
 		tnode->right = NULL;
 	}
@@ -77,7 +81,7 @@ TNode* find_parent(TNode* root, int id){
 	while(temp!=NULL) {
 		
 		/* if new node id is less than current node id, 
-		the new node will be in left subtree of the current node */
+		the new node will be in left sub-tree of the current node */
 		if((temp->data).id > id){
 			printf("\ngoing left\n");
 			paren = temp;		
@@ -85,7 +89,7 @@ TNode* find_parent(TNode* root, int id){
 		}
 		
 		/* if new node id is greater than current node id,
-		the new node will be in the right subtree of the current node */
+		the new node will be in the right sub-tree of the current node */
 		else if((temp->data).id < id){
 			printf("\ngoing right\n");
 			paren = temp;
@@ -103,6 +107,28 @@ TNode* find_parent(TNode* root, int id){
 	/* we have made sure, that root is never NULL, during function call, so if parent is NULL 
 	 while returning, this means, there is duplication*/
 	return paren;
+}
+
+
+// find node
+TNode* find_node_with_id(TNode* root, int id){
+	
+	TNode* ret_node = root;
+	if(root == NULL) indicate_error(NPTR);
+	else {
+		while(ret_node!=NULL){
+
+			// node found
+			if((ret_node->data).id == id) break;
+
+			// node id less than rqd go to right
+			if(ret_node->data.id < id) ret_node = ret_node->right;
+			
+			// node id is greater than rqd go left
+			if(ret_node->data.id > id) ret_node = ret_node->left;
+		}	
+	} 
+	return ret_node;
 }
 
 
@@ -140,14 +166,69 @@ _status_code insert(TNode** rootref, Ndtype data){
 				
 				// insert to the left or right depending on id
 				else if(parent != NULL){
-					if((parent->data).id > (new_TNode->data).id) parent->left = new_TNode;
-					else if((parent->data).id < (new_TNode->data).id) parent->right = new_TNode;
+					if((parent->data).id > (new_TNode->data).id){
+						parent->left = new_TNode;
+					}
+					else if((parent->data).id < (new_TNode->data).id){
+						parent->right = new_TNode;					
+					}
+					new_TNode->parent = parent;
 				}	
 			}		
 		}		
 	} 	 
 	return ret_code;
 }
+
+
+// deletion using id
+_status_code delete_with_id(TNode** rootref, int id){
+	_status_code ret_code = SUCCESS;
+	
+	/*if root pointer reference is null or root pointer is null,
+	there is nothing to delete*/	
+	if(rootref == NULL || *rootref == NULL)ret_code = NOACT;	
+	else{
+		// find the node 
+		TNode* node_to_del = find_node_with_id(*rootref, id);
+		
+		// if there is no such node
+		if(node_to_del == NULL)ret_code = FAILURE;
+		else {
+
+			// if node has no children, just remove its link from the parent
+			if(node_to_del->left == NULL && node_to_del->right == NULL){
+				if((node_to_del->parent->data).id > (node_to_del->data).id)
+
+				// if node to delete is left child of its parent
+					node_to_del->parent->left = NULL;			
+
+				// if node to delete is right child of its parent					
+				else 	node_to_del->parent->right = NULL;	
+				
+				// free memory 
+				free(node_to_del);			
+			}
+			// if node has one child
+			else if(node_to_del->left == NULL || node_to_del->right == NULL) {
+
+			}
+			// if node has two children
+			else{
+			
+			}
+		} 
+	}	
+	return ret_code;
+}
+
+
+// deletion using value
+_status_code delete_with_value(TNode** rootref, float value){
+	_status_code ret_code = SUCCESS;	
+	return ret_code;
+}
+
 
 int main(){
 	
@@ -183,11 +264,10 @@ int main(){
 
 	// testing general insertion
 	printf("\nTEST3: general insertion:\n");
-	for(int i=0;i<100;i++) {
+	for(int i=0;i<30;i++){
 		printf("\ntesting for %d\n", data[i].id);
 		status = insert(&testRoot, data[i]);
 		printf("\nstatus: %d\ncontinue?", status);	
-		getchar();
 	}
 	return 0;
 }
