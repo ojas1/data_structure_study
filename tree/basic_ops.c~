@@ -83,7 +83,6 @@ TNode* find_parent(TNode* root, int id){
 		/* if new node id is less than current node id, 
 		the new node will be in left sub-tree of the current node */
 		if((temp->data).id > id){
-			printf("\ngoing left\n");
 			paren = temp;		
 			temp = temp->left;
 		}
@@ -91,14 +90,12 @@ TNode* find_parent(TNode* root, int id){
 		/* if new node id is greater than current node id,
 		the new node will be in the right sub-tree of the current node */
 		else if((temp->data).id < id){
-			printf("\ngoing right\n");
 			paren = temp;
 			temp = temp->right;
 			}
 		
 		/* if both are equal, the node cannot be inserted, as we are not allowing id duplication */
 		else if((temp->data).id == id){
-			printf("\nduplicate \n");
 			temp = NULL;
 			paren = temp;
 			}
@@ -191,6 +188,9 @@ _status_code delete_with_id(TNode** rootref, int id){
 	else{
 		// find the node 
 		TNode* node_to_del = find_node_with_id(*rootref, id);
+
+		// if the node to be deleted is root
+		if(*rootref == node_to_del){free(*rootref); *rootref = NULL; return SUCCESS;}		
 		
 		// if there is no such node
 		if(node_to_del == NULL)ret_code = FAILURE;
@@ -249,7 +249,7 @@ int main(){
 		data[i].id = (i*100)%21;
 		data[i].value = i*25.8;	
 	}
-
+/*
 	// testing create new node	
 	TNode* testNode = create_TNode(d);
 	printf("\nTEST1: create new node:\n");
@@ -269,5 +269,14 @@ int main(){
 		status = insert(&testRoot, data[i]);
 		printf("\nstatus: %d\ncontinue?", status);	
 	}
+*/
+	// testing deletion of leaf nodes
+	TNode* root = NULL;
+	_status_code status = insert(&root, data[0]);
+	status = insert(&root, data[1]);
+	status = insert(&root, data[2]);
+	status = insert(&root, data[3]);
+	_status_code del_stat = delete_with_id(&root, data[3].id);
+	printf("\ndeletion status: %d\n", del_status);
 	return 0;
 }
