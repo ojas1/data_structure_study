@@ -74,6 +74,20 @@ TNode* create_TNode(Ndtype data){
 }
 
 
+// print the entire tree, inorder
+_status_code inordr_print(TNode* root){
+	_status_code ret = SUCCESS;
+
+	// if root is null, just return 
+	if(root == NULL)return NOACT;
+
+	inordr_print(root->left);
+	printf("%d, ", root->data.id);
+	inordr_print(root->right);
+	
+	return ret;
+}
+
 // find parent of node to be inserted in the tree
 TNode* find_parent(TNode* root, int id){
 	TNode *temp = root, *paren=NULL;
@@ -245,11 +259,11 @@ int main(){
 
 	Ndtype data[100];
 	
-	for(int i=0;i<100;i++) {
-		data[i].id = (i*100)%21;
-		data[i].value = i*25.8;	
+	for(int i=0;i<8;i++) {
+		data[i].id = (i+8)%11;
+		data[i].value = (i+8)*25.8;	
 	}
-/*
+
 	// testing create new node	
 	TNode* testNode = create_TNode(d);
 	printf("\nTEST1: create new node:\n");
@@ -269,14 +283,17 @@ int main(){
 		status = insert(&testRoot, data[i]);
 		printf("\nstatus: %d\ncontinue?", status);	
 	}
-*/
+
 	// testing deletion of leaf nodes
 	TNode* root = NULL;
-	_status_code status = insert(&root, data[0]);
-	status = insert(&root, data[1]);
-	status = insert(&root, data[2]);
-	status = insert(&root, data[3]);
-	_status_code del_stat = delete_with_id(&root, data[3].id);
-	printf("\ndeletion status: %d\n", del_status);
+	
+	for(int i=0;i<8;i++)insert(&root, data[i]);
+	inordr_print(root);
+	for(int i=6;i<8;i++){
+		delete_with_id(&root, data[i].id);
+		printf("\n");
+		inordr_print(root);
+		printf("\n");
+	}
 	return 0;
 }
