@@ -223,9 +223,25 @@ _status_code delete_with_id(TNode** rootref, int id){
 				// free memory 
 				free(node_to_del);			
 			}
-			// if node has one child
+			// if node has one child, shift the child to its grandparent.
 			else if(node_to_del->left == NULL || node_to_del->right == NULL) {
 
+				if(node_to_del->left != NULL){
+					
+					if((node_to_del->parent->data).id > (node_to_del->data).id)
+					node_to_del->parent->left = node_to_del->left;
+					else node_to_del->parent->right = node_to_del->left;
+					
+					node_to_del->left->parent = node_to_del->parent;
+				}
+				else {
+
+					if((node_to_del->parent->data).id > (node_to_del->data).id)
+					node_to_del->parent->left = node_to_del->right;
+					else node_to_del->parent->right = node_to_del->right;
+					
+					node_to_del->right->parent = node_to_del->parent;
+				}
 			}
 			// if node has two children
 			else{
@@ -295,5 +311,6 @@ int main(){
 		inordr_print(root);
 		printf("\n");
 	}
+	
 	return 0;
 }
