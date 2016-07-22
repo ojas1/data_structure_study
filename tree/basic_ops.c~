@@ -212,6 +212,12 @@ _status_code delete_with_id(TNode** rootref, int id){
 
 			// if node has no children, just remove its link from the parent
 			if(node_to_del->left == NULL && node_to_del->right == NULL){
+
+				if(node_to_del == *rootref) {
+					free(*rootref);
+					*rootref = NULL;					
+				}				
+			
 				if((node_to_del->parent->data).id > (node_to_del->data).id)
 
 				// if node to delete is left child of its parent
@@ -227,7 +233,12 @@ _status_code delete_with_id(TNode** rootref, int id){
 			else if(node_to_del->left == NULL || node_to_del->right == NULL) {
 
 				if(node_to_del->left != NULL){
-					
+
+					if(node_to_del == *rootref) {
+						free(*rootref);
+						*rootref = node_to_del->left;					
+					}
+										
 					if((node_to_del->parent->data).id > (node_to_del->data).id)
 					node_to_del->parent->left = node_to_del->left;
 					else node_to_del->parent->right = node_to_del->left;
@@ -236,6 +247,11 @@ _status_code delete_with_id(TNode** rootref, int id){
 				}
 				else {
 
+					if(node_to_del == *rootref) {
+						free(*rootref);
+						*rootref = node_to_del->right;					
+					}
+										
 					if((node_to_del->parent->data).id > (node_to_del->data).id)
 					node_to_del->parent->left = node_to_del->right;
 					else node_to_del->parent->right = node_to_del->right;
@@ -245,7 +261,17 @@ _status_code delete_with_id(TNode** rootref, int id){
 			}
 			// if node has two children
 			else{
-			
+				TNode* repl = node_to_del->right;
+				while(repl->left != NULL) repl = repl->left;
+				
+				node_to_del->left->parent = repl;
+				node_to_del->right->parent = repl;
+				repl->parent->left = NULL;
+				repl->left = node_to_del->left;
+				repl->right = node_to_del->right;
+				if(node_to_del == *rootref) *rootref = repl; 
+				free(node_to_del);
+				node_to_del = NULL;	
 			}
 		} 
 	}	
@@ -294,10 +320,10 @@ int main(){
 
 	// testing general insertion
 	printf("\nTEST3: general insertion:\n");
-	for(int i=0;i<30;i++){
+	for(int i=0;i<5;i++){
 		printf("\ntesting for %d\n", data[i].id);
 		status = insert(&testRoot, data[i]);
-		printf("\nstatus: %d", status);	
+		printf("\nstatus: %d\n", status);	
 	}
 
 	// testing deletion of leaf nodes
@@ -305,7 +331,7 @@ int main(){
 	
 	for(int i=0;i<8;i++)insert(&root, data[i]);
 	inordr_print(root);
-	for(int i=6;i<8;i++){
+	for(int i=0;i<8;i++){
 		delete_with_id(&root, data[i].id);
 		printf("\n");
 		inordr_print(root);
