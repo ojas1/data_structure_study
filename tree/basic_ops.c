@@ -200,22 +200,20 @@ _status_code delete_with_id(TNode** rootref, int id){
 	there is nothing to delete*/	
 	if(rootref == NULL || *rootref == NULL)ret_code = NOACT;	
 	else{
+				
 		// find the node 
 		TNode* node_to_del = find_node_with_id(*rootref, id);
-
-		// if the node to be deleted is root
-		if(*rootref == node_to_del){free(*rootref); *rootref = NULL; return SUCCESS;}		
 		
 		// if there is no such node
 		if(node_to_del == NULL)ret_code = FAILURE;
 		else {
-
 			// if node has no children, just remove its link from the parent
 			if(node_to_del->left == NULL && node_to_del->right == NULL){
 
 				if(node_to_del == *rootref) {
 					free(*rootref);
-					*rootref = NULL;					
+					*rootref = NULL;		
+					return SUCCESS;			
 				}				
 			
 				if((node_to_del->parent->data).id > (node_to_del->data).id)
@@ -231,12 +229,12 @@ _status_code delete_with_id(TNode** rootref, int id){
 			}
 			// if node has one child, shift the child to its grandparent.
 			else if(node_to_del->left == NULL || node_to_del->right == NULL) {
-
 				if(node_to_del->left != NULL){
 
 					if(node_to_del == *rootref) {
 						free(*rootref);
-						*rootref = node_to_del->left;					
+						*rootref = node_to_del->left;	
+						return SUCCESS;				
 					}
 										
 					if((node_to_del->parent->data).id > (node_to_del->data).id)
@@ -265,11 +263,21 @@ _status_code delete_with_id(TNode** rootref, int id){
 				while(repl->left != NULL) repl = repl->left;
 				
 				node_to_del->left->parent = repl;
-				node_to_del->right->parent = repl;
-				repl->parent->left = NULL;
 				repl->left = node_to_del->left;
-				repl->right = node_to_del->right;
-				if(node_to_del == *rootref) *rootref = repl; 
+				node_to_del->left = NULL;
+				
+				if(node_to_del->right!=repl){
+					node_to_del->right->parent = repl;
+					repl->right = node_to_del->right;
+				}			
+				node_to_del->right = NULL;
+				
+				if(repl->parent->left == repl)
+				repl->parent->left = NULL;
+				else repl->parent->right = repl->right;
+				 
+				repl->parent = node_to_del->parent;
+				if(node_to_del == *rootref) {*rootref = repl;} 
 				free(node_to_del);
 				node_to_del = NULL;	
 			}
@@ -305,7 +313,7 @@ int main(){
 		data[i].id = (i+8)%11;
 		data[i].value = (i+8)*25.8;	
 	}
-
+/*
 	// testing create new node	
 	TNode* testNode = create_TNode(d);
 	printf("\nTEST1: create new node:\n");
@@ -325,7 +333,7 @@ int main(){
 		status = insert(&testRoot, data[i]);
 		printf("\nstatus: %d\n", status);	
 	}
-
+*/
 	// testing deletion of leaf nodes
 	TNode* root = NULL;
 	
