@@ -2,7 +2,7 @@
 #include <stdlib.h>
 
 #define M 113 // modulo for hash function 
-#define S 234 // table size
+#define S 231 // table size
 
 typedef struct cnode{ // chain node structure, for storing key value pairs having same hash values 
 	int k; // key
