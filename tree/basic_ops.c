@@ -289,7 +289,8 @@ _status_code delete_with_id(TNode** rootref, int id){
 
 // deletion using value
 _status_code delete_with_value(TNode** rootref, float value){
-	_status_code ret_code = SUCCESS;	
+	_status_code ret_code = SUCCESS;
+	TNode* find_node_with_data(value);	
 	return ret_code;
 }
 

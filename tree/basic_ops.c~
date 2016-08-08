@@ -277,7 +277,7 @@ _status_code delete_with_id(TNode** rootref, int id){
 				else repl->parent->right = repl->right;
 				 
 				repl->parent = node_to_del->parent;
-				if(node_to_del == *rootref) {*rootref = repl; printf("changing root ");} 
+				if(node_to_del == *rootref) {*rootref = repl;} 
 				free(node_to_del);
 				node_to_del = NULL;	
 			}
@@ -289,7 +289,8 @@ _status_code delete_with_id(TNode** rootref, int id){
 
 // deletion using value
 _status_code delete_with_value(TNode** rootref, float value){
-	_status_code ret_code = SUCCESS;	
+	_status_code ret_code = SUCCESS;
+	TNode* find_node_with_data(value);	
 	return ret_code;
 }
 
