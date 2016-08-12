@@ -1,7 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 
-#define M 113 // modulo for hash function 
+#define M 113 // modulo for division method
+#define Mm 1024  
+#define W 64
+#define A 9223372036854000000L   
 #define S 231 // table size
 
 typedef struct cnode{ // chain node structure, for storing key value pairs having same hash values 
@@ -14,14 +18,20 @@ int division(int k){ // hash function
 	return k%M;
 }
 
+int multiplication(int k){
+	return ((A*k)%pow(2,W))>>(W-10);
+}
+
 void insert(CNode* T[],int k,int v){ // insert key value pair in hash table
-	int h=division(k); // compute hash value
+//	int h=division(k); // compute hash value
+	int h=multiplication(k); // compute hash value
 	CNode* n=malloc(sizeof(CNode)); n->k=k;	n->v=v;// create new node and insert k,v pair
 	CNode* t=T[h]; T[h]=n; n->link=t; // insert node at head of chain
 }
 
 void delete(CNode* T[], int k){ // delete k,v pair for given key
-	int h=division(k);
+//	int h=division(k);
+	int h=multiplication(k); // compute hash value	
 	CNode* c=T[h],*p=c;
 	if(T[h]->k==k){ // if at head of chain
 		T[h]=T[h]->link;
@@ -41,7 +51,8 @@ void delete(CNode* T[], int k){ // delete k,v pair for given key
 }
 
 int search(CNode* T[], int k){ // return v for given k
-	int h=division(k);
+//	int h=division(k);
+	int h=multiplication(k); // compute hash value	
 	CNode* c=T[h];
 	while(c!=NULL){ // traverse the chain, until node with given k not found
 		if(c->k==k)return c->v; // return v for given k
@@ -52,7 +63,8 @@ int search(CNode* T[], int k){ // return v for given k
 
 void disp(CNode* T[]){ // display all k,v pairs in table
 	for(int i=0;i<S;i++){
-		int h=division(i);
+//		int h=division(i);
+	int h=multiplication(k); // compute hash value		
 		CNode* c=T[h];
 		while(c!=NULL){
 			printf("key: %d, value: %d\n",c->k, c->v);
